@@ -9,10 +9,17 @@ else \
 apt-get update &&  apt-get install --no-install-recommends -y git cron; \
 fi
 #RUN apt-get update &&  apt-get install --no-install-recommends -y git cron
-RUN pip install wyze_sdk garth
-RUN mkdir /wyze_garmin_sync
+# manually installed patched wyze-sdk that supports ScaleX
 WORKDIR /
-RUN git clone https://github.com/svanhoutte/wyze_garmin_sync.git
+RUN mkdir /wyze-sdk
+RUN git clone https://github.com/svanhoutte/wyze-sdk.git 
+WORKDIR /wyze-sdk
+RUN pip install .
+RUN pip install garth
+# install fix for sccale code
+WORKDIR /
+RUN mkdir /wyze_garmin_sync
+RUN git clone https://github.com/ronderful/wyze_garmin_sync.git
 WORKDIR /wyze_garmin_sync
 RUN apt-get remove -y gcc git libc6-dev
 COPY entrypoint.sh /usr/bin/

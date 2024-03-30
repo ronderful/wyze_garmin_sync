@@ -50,7 +50,7 @@ def upload_to_garmin(file_path):
         print(f"Garmin upload error: {e}")
         return False
 
-def generate_fit_file(scale):
+def generate_fit_file(scale, fitfile_path):
     fit = FitEncoder_Weight()
     timestamp = math.trunc(scale.latest_records[0].measure_ts / 1000)
     weight_in_kg = scale.latest_records[0].weight * 0.45359237
@@ -97,7 +97,7 @@ def generate_fit_file(scale):
         bmi = data.get('bmi'),
     )
     fit.finish()
-    with open("wyze_scale.fit", "wb") as fitfile:
+    with open(fitfile_path, "wb") as fitfile:
         fitfile.write(fit.getvalue())
 
 def main():
@@ -108,17 +108,20 @@ def main():
         for device in client.devices_list():
             if device.type == "WyzeScale":
                 scale = client.scales.info(device_mac=device.mac)
+
+                base_path = "/wyze_garmin_sync"
+                fitfile_path = base_path + "/wyze_scale.fit"
+                cksum_file_path = base_path + "/cksum.txt"
+
                 print(f"Scale found with MAC {device.mac}. Latest record is:")
                 print(scale.latest_records)
                 print(f"Body Type: {scale.latest_records[0].body_type or 5}")
 
                 print("Generating fit data...")
-                generate_fit_file(scale)
+                generate_fit_file(scale, fitfile_path)
                 print("Fit data generated...")
 
-                fitfile_path = "/wyze_garmin_sync/wyze_scale.fit"
-                cksum_file_path = "/wyze_garmin_sync/cksum.txt"
-
+                
                 # Calculate checksum of the fit file
                 with open(fitfile_path, "rb") as fitfile:
                     cksum = hashlib.md5(fitfile.read()).hexdigest()
