@@ -2,6 +2,9 @@
 # Wyze Connect Sync
 ***
 
+## This is a fork from https://github.com/svanhoutte/wyze_garmin_sync.     
+## Fixing a specific issue with Scale X devices where the fit file is not written to a consistent location.
+
 <p align="center">
   <img width="25%" src="https://user-images.githubusercontent.com/22617546/208175452-dbbff5b9-59ce-4ffc-a255-698617c94de0.jpg" />
 </p>
